@@ -30,6 +30,9 @@ export const appTextStyles = StyleSheet.create({
   dark: {
     color: COLORS.primaryColors.primary900,
   },
+  alignCenter: {
+    textAlign: 'center',
+  },
 });
 
 export const appStyles = StyleSheet.create({
