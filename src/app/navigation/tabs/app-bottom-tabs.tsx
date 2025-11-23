@@ -1,9 +1,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { WatchlistScreen } from '../../features/watchlist/screens';
-import { AuthScreen } from '../../features/auth/screens';
-import { MarketGraphsScreen } from '../../features/market-graphs/screens';
-import { AlertsScreen } from '../../features/alerts/screens';
-import { APP_BOTTOM_TABS_SCREENS } from '../../shared/constants/app';
+import { WatchlistScreen } from '../../../features/watchlist/screens';
+import { AuthScreen } from '@features/auth/screens/index';
+import { MarketGraphsScreen } from '../../../features/market-graphs/screens';
+import { AlertsScreen } from '../../../features/alerts/screens';
+import { APP_BOTTOM_TABS_SCREENS } from '../../../shared/constants/app';
 
 const Tab = createBottomTabNavigator();
 
