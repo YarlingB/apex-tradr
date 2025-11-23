@@ -9,3 +9,6 @@ export const APP_BOTTOM_TABS_SCREENS = {
 
 export const SCREEN_HEIGHT = Dimensions.get('window').height;
 export const SCREEN_WIDTH = Dimensions.get('window').width;
+
+export const FINNHUB_SOCKET_SERVICE_URL = 'wss://ws.finnhub.io';
+export const FINNHUB_API_KEY = '';

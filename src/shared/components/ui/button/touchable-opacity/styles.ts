@@ -24,4 +24,8 @@ export const touchableOpacityStyles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.primary,
   },
+  ghost: {
+    backgroundColor: 'transparent',
+    borderRadius: 12,
+  },
 });
