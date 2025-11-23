@@ -1,5 +1,5 @@
-import { getSymbolsService } from '../../services/stock-markets/get-symbols';
-import useStockSymbolsStore from './store';
+import { getSymbolsService } from '@shared/services/stock-markets/get-symbols';
+import useStockSymbolsStore from '@/shared/store/stock-symbols';
 
 const useStockSymbols = () => {
   const { stockSymbols, setStockSymbols } = useStockSymbolsStore();

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { IStockSymbol } from '../../data-types/interfaces/stock-symbols';
+import { IStockSymbol } from '@shared/data-types/interfaces/stock-symbols';
 
 interface IStockSymbolsStore {
   stockSymbols: IStockSymbol[];
