@@ -1,4 +1,4 @@
-import { ScrollView, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { spacingStyles } from '@app/theme/spacing';
 import { Typography } from '@shared/components/ui';
 import { useWatchlist } from '@shared/hooks/use-watchlist';
@@ -12,17 +12,24 @@ const StocksTrackingList = () => {
       style={[
         spacingStyles.lgTopMargin,
         spacingStyles.smBottomMargin,
-        { flex: 1 },
+        styles.flex1Container,
       ]}
     >
       {watchlist.length > 0 ? (
-        <View style={[spacingStyles.mdTopMargin, { flex: 1 }]}>
+        <View style={[spacingStyles.mdTopMargin, styles.flex1Container]}>
           <Typography variant="lg" style={spacingStyles.smVerticalMargin}>
             My Watchlist
           </Typography>
-          <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={styles.flex1Container}
+            showsVerticalScrollIndicator={false}
+          >
             {watchlist.map(stock => (
-              <TrackingItemCard key={stock.symbol} stock={stock} />
+              <TrackingItemCard
+                key={`stock-item-${stock.symbol}`}
+                stock={stock}
+                showAlertConfigAcction={true}
+              />
             ))}
           </ScrollView>
         </View>
@@ -34,5 +41,11 @@ const StocksTrackingList = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  flex1Container: {
+    flex: 1,
+  },
+});
 
 export default StocksTrackingList;

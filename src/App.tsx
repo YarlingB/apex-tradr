@@ -7,17 +7,15 @@
 
 import { StatusBar, useColorScheme } from 'react-native';
 import NavigationWrapper from './app/navigation/navigation-wrapper';
-import { MarketDataProvider } from './shared/context/market-data-context';
+import { useStockAlertNotifications } from './shared/hooks/use-stock-alert-notifications';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
-
+  useStockAlertNotifications();
   return (
     <>
-      <MarketDataProvider>
-        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-        <NavigationWrapper />
-      </MarketDataProvider>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <NavigationWrapper />
     </>
   );
 }

@@ -22,20 +22,6 @@ const StockSelection = () => {
 
   return (
     <>
-      {/* <Select value={selectedStock} onValueChange={setSelectedStock}>
-        <SelectTrigger>
-          <SelectValue placeholder="Select Stock" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectLabel>Select Stock</SelectLabel>
-          <FlatList
-            data={options}
-            keyExtractor={item => item.value}
-            renderItem={({ item }) => renderStockItem({ item })}
-          />
-        </SelectContent>
-      </Select> */}
-
       <CustomTouchableOpacity onPress={() => setOpen(true)}>
         <Typography style={[appTextStyles.light, appTextStyles.alignCenter]}>
           Add stocks to your watchlist

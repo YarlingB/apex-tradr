@@ -1359,6 +1359,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@notifee/react-native@^9.1.8":
+  version "9.1.8"
+  resolved "https://registry.yarnpkg.com/@notifee/react-native/-/react-native-9.1.8.tgz#3d55cb3fbcc21f9e35931e366afdf64b294da891"
+  integrity sha512-Az/dueoPerJsbbjRxu8a558wKY+gONUrfoy3Hs++5OqbeMsR0dYe6P+4oN6twrLFyzAhEA1tEoZRvQTFDRmvQg==
+
 "@react-native-community/cli-clean@20.0.0":
   version "20.0.0"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli-clean/-/cli-clean-20.0.0.tgz#e685f5404195ded69c81d1394e8c5eb332b780bc"
@@ -5472,6 +5477,11 @@ react-is@^19.1.0, react-is@^19.1.1:
   version "19.2.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-19.2.0.tgz#ddc3b4a4e0f3336c3847f18b806506388d7b9973"
   integrity sha512-x3Ax3kNSMIIkyVYhWPyO09bu0uttcAIoecO/um/rKGQ4EltYWVYtyiGkS/3xMynrbVQdS69Jhlv8FXUEZehlzA==
+
+react-native-config@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-config/-/react-native-config-1.6.0.tgz#dd830c8ada35eb17ad1371569515836d34230bd7"
+  integrity sha512-UtiKWiLlSNgWf/9CPMkM1UoOHtnc7p9YyvUb9DozgQ41xcRhImGfh6nAtW9HhWhfsvMgTdq7l+xSMn9JPW0SLQ==
 
 react-native-safe-area-context@^5.6.2:
   version "5.6.2"

@@ -1,4 +1,5 @@
 import { IWatchlist } from '../data-types/interfaces/watchlist';
+import { getStockQuoteService } from '../services/stock-markets/stock-quote';
 import useWatchlistStore from '../store/watchlist';
 
 /**
@@ -8,8 +9,18 @@ import useWatchlistStore from '../store/watchlist';
 export const useWatchlist = () => {
   const { watchlist, setWatchlist } = useWatchlistStore();
 
-  const addToWatchlist = (stock: IWatchlist) => {
-    setWatchlist([...watchlist, stock]);
+  const addToWatchlist = async (stock: IWatchlist) => {
+    const retrievedQuote = await getSymbolQuote(stock.symbol);
+    const payload = { ...stock };
+    if (retrievedQuote) {
+      payload.quote = retrievedQuote;
+    }
+    setWatchlist([...watchlist, payload]);
+  };
+
+  const getSymbolQuote = async (symbol: string) => {
+    const quote = await getStockQuoteService(symbol);
+    return quote.success ? quote.data : null;
   };
   const removeFromWatchlist = (stock: IWatchlist) => {
     setWatchlist(watchlist.filter(item => item.symbol !== stock.symbol));

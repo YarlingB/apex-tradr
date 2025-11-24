@@ -1,8 +1,63 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Stock Watchlist App
 
-# Getting Started
+A React Native application for real-time stock tracking and price alerts.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 🚀 Features
+
+- Real-time Data: Live stock prices updates using WebSockets (Finnhub API).
+
+- Watchlist: Manage your favorite stocks with persistent storage.
+
+- Price Alerts: Configure custom price thresholds for specific stocks.
+
+- Push Notifications: Receive local notifications immediately when a stock crosses your target price (even in background/quit state depending on implementation).
+
+- State Management: Optimized global state using Zustand.
+
+## Tech stack
+
+- Core: React Native (CLI), TypeScript.
+- Navigation: React Navigation.
+- State Management: Zustand (w/ Persistence).
+- Networking: Native WebSocket API.
+- Notifications: Notifee
+
+# Architecture & Conventions
+
+This project follows a **Feature-Based** architecture to maximize scalability and code co-location. Each feature encapsulates its own UI, logic, etc.
+
+### 📂 Directory Structure
+
+src/
+├── app/ # Global configuration (Nav, Theme, Config)
+├── features/ # Functional modules (Auth, Watchlist, Graph, etc.)
+│ └── [feature-name]/
+│ ├── components/ # Feature-specific UI
+│ ├── hooks/ # Feature-specific logic
+│ └── \*.store.ts # Local state (Zustand)
+├── shared/ # Reusable UI Kit and utilities
+
+## Naming conventions
+
+In this project the naming convention stablished to use is Kebab Case (kebab-case) in the whole application, it means that this rule applies to:
+
+- Folders and files: kebab-case (Mandatory)
+- React Components: PascalCase
+- Interfaces and Types: PascalCase
+- Functions / Hooks: camelCase
+- Constants: UPPER_SNAKE_CASE
+
+## 📝 Notes for Reviewers
+
+- The app uses the Finnhub Sandbox/Free API tier.
+- Ensure you grant notification permissions when prompted to test the alert functionality.
+
+# Getting started
+
+## Prerequisites
+
+- Node.js > 18
+- Android Studio / Xcode
 
 ## Step 1: Start Metro
 
@@ -76,22 +131,3 @@ When you want to forcefully reload, for example to reset the state of your app, 
 ## Congratulations! :tada:
 
 You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
