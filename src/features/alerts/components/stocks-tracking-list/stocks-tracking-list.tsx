@@ -22,7 +22,10 @@ const StocksTrackingList = () => {
           </Typography>
           <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
             {watchlist.map(stock => (
-              <TrackingItemCard key={stock.symbol} stock={stock} />
+              <TrackingItemCard
+                key={`stock-item-${stock.symbol}`}
+                stock={stock}
+              />
             ))}
           </ScrollView>
         </View>
