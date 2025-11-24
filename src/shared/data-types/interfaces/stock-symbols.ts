@@ -4,3 +4,8 @@ export interface IStockSymbol {
   symbol: string;
   mic: string;
 }
+
+export interface IStockSymbolsStore {
+  stockSymbols: IStockSymbol[];
+  setStockSymbols: (stockSymbols: IStockSymbol[]) => void;
+}

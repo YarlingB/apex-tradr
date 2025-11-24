@@ -21,9 +21,9 @@ export const bottomsheetStyles = StyleSheet.create({
     width: '100%',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    borderWidth: 1,
-    borderColor: COLORS.zincColors.zinc800,
-    paddingBottom: 40, // Espacio seguro abajo (para iPhone X/11/etc)
+    borderTopWidth: 2,
+    borderTopColor: COLORS.zincColors.zinc100,
+    paddingBottom: 40,
     maxHeight: SCREEN_HEIGHT * 0.9,
     overflow: 'hidden',
   },

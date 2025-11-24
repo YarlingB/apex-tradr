@@ -2,15 +2,15 @@
 import { useEffect, useState } from 'react';
 import { FlatList, View } from 'react-native';
 
-import { ISelectOption, SelectItem } from '@shared/components/ui/select';
 import { Typography } from '@shared/components/ui';
+import { appTextStyles } from '@app/theme/app-theme';
+import { CustomTouchableOpacity } from '@shared/components/ui/button';
+import useStockSymbols from '@shared/hooks/use-stock-symbols';
 import {
   BottomSheet,
   BottomSheetContent,
 } from '@shared/components/ui/bottomsheet/bottomsheet';
-import { CustomTouchableOpacity } from '@shared/components/ui/button';
-import { appTextStyles } from '@app/theme/app-theme';
-import useStockSymbols from '@shared/hooks/use-stock-symbols';
+import { RenderStockItem } from './stock-item';
 
 const StockSelection = () => {
   const [open, setOpen] = useState(false);
@@ -20,30 +20,6 @@ const StockSelection = () => {
     actions.getStockSymbols();
   }, []);
 
-  const [selectedStock, setSelectedStock] = useState<ISelectOption | null>(
-    null,
-  );
-
-  const handleSelect = (item: ISelectOption) => {
-    setSelectedStock(item);
-  };
-
-  const options = stockSymbols.map(symbol => ({
-    label: symbol.description,
-    value: symbol.symbol,
-  }));
-
-  const renderStockItem = ({ item }: { item: ISelectOption }) => (
-    <SelectItem
-      value={item.value}
-      label={item.label}
-      onSelectItem={() => handleSelect(item)}
-    >
-      <View>
-        <Typography>{item.label}</Typography>
-      </View>
-    </SelectItem>
-  );
   return (
     <>
       {/* <Select value={selectedStock} onValueChange={setSelectedStock}>
@@ -61,8 +37,8 @@ const StockSelection = () => {
       </Select> */}
 
       <CustomTouchableOpacity onPress={() => setOpen(true)}>
-        <Typography style={appTextStyles.light}>
-          Choose the stocks you want to watch
+        <Typography style={[appTextStyles.light, appTextStyles.alignCenter]}>
+          Add stocks to your watchlist
         </Typography>
       </CustomTouchableOpacity>
       <BottomSheet open={open} onOpenChange={setOpen}>
@@ -72,9 +48,9 @@ const StockSelection = () => {
               Please choose from the list below to add to your watchlist
             </Typography>
             <FlatList
-              data={options}
-              keyExtractor={item => item.value}
-              renderItem={({ item }) => renderStockItem({ item })}
+              data={stockSymbols}
+              keyExtractor={item => item.symbol}
+              renderItem={({ item }) => <RenderStockItem item={item} />}
             />
           </View>
         </BottomSheetContent>
