@@ -1,7 +1,6 @@
 import { AlertConditionType } from '../types/alert-condition';
 
 export interface IStockAlert {
-  id: string;
   symbol: string;
   alertCondition: AlertConditionType;
   targetValue: number;

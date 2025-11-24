@@ -14,8 +14,7 @@ interface IWatchlistItemProps {
 
 export const WatchlistItem = ({ stock, symbolData }: IWatchlistItemProps) => {
   const { quote } = stock;
-  const enoughtData = symbolData.length >= 2;
-  const latestTrade = enoughtData ? symbolData[symbolData.length - 1] : null;
+  const latestTrade = symbolData[symbolData.length - 1];
   const percentChangeValue =
     quote && latestTrade && quote.pc
       ? calculatePercentChange(latestTrade?.p, quote?.pc)

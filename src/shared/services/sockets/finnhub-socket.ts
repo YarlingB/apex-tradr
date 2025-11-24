@@ -10,6 +10,10 @@ import {
 
 let socket: WebSocket | null = null;
 let throttleInterval: ReturnType<typeof setTimeout> | null = null;
+let retryTimeout: ReturnType<typeof setTimeout> | null = null;
+let retryCount = 0;
+const MAX_RETRY_DELAY = 30000; // 30 seconds max
+const INITIAL_RETRY_DELAY = 4000; // 4 seconds initial
 
 const subscriptions = new Set<string>();
 const listeners = new Set<(prices: PriceMapType) => void>();
@@ -33,6 +37,19 @@ const stopThrottling = () => {
   if (throttleInterval) {
     clearInterval(throttleInterval);
     throttleInterval = null;
+  }
+};
+
+const getRetryDelay = (isRateLimit: boolean): number => {
+  if (isRateLimit) {
+    // Exponential backoff for rate limits:  10s...
+    retryCount++;
+    const delay = Math.min(10000 * retryCount, MAX_RETRY_DELAY);
+    return delay;
+  } else {
+    // Reset retry count for non-rate-limit errors
+    retryCount = 0;
+    return INITIAL_RETRY_DELAY;
   }
 };
 
@@ -153,19 +170,9 @@ const handleMessage = (event: WebSocketMessageEvent) => {
         socket.send('{"type":"pong"}');
       }
     }
-    if (message.type === 'error') {
-      console.error('[finnhub-socket] ❌ ERROR from Finnhub:', message);
-    }
-    if (message.type === 'subscription') {
-      console.log('[finnhub-socket] ✅ Subscription confirmation:', message);
-    } else {
-      console.log('[finnhub-socket] ⚠️ Message type not trade:', message.type);
-      console.log('[finnhub-socket] Full message content:', message);
-    }
   } catch (error) {
     console.error('[finnhub-socket] ❌ Error parsing message:', error);
     console.error('[finnhub-socket] Raw message:', event.data);
-    console.error('[finnhub-socket] Message type:', typeof event.data);
   }
 };
 
@@ -183,13 +190,7 @@ const restoreSubscription = () => {
         type: 'subscribe',
         symbol: normalizedSymbol,
       });
-      console.log(
-        '[finnhub-socket] Restoring subscription for:',
-        symbol,
-        '→',
-        normalizedSymbol,
-      );
-      console.log('[finnhub-socket] Sending restore message:', message);
+
       socket!.send(message);
     });
   } else {
@@ -207,8 +208,6 @@ export const connect = () => {
   }
 
   console.log('[finnhub-socket] Connecting to WebSocket...');
-  console.log('[finnhub-socket] URL:', FINNHUB_SOCKET_SERVICE_URL);
-  console.log('[finnhub-socket] API Key present:', !!FINNHUB_API_KEY);
 
   // create new socket
   socket = new WebSocket(
@@ -218,14 +217,9 @@ export const connect = () => {
   // restore subscriptions and start throttling when socket is opened
   socket.onopen = () => {
     console.log('[finnhub-socket] ✅ Connected to Finnhub WebSocket');
-    console.log(
-      '[finnhub-socket] Current subscriptions:',
-      Array.from(subscriptions),
-    );
-    console.log(
-      '[finnhub-socket] Trade data listeners count:',
-      tradeDataListeners.size,
-    );
+
+    // Reset retry count on successful connection
+    retryCount = 0;
     restoreSubscription();
     startThrottling();
 
@@ -245,22 +239,40 @@ export const connect = () => {
     );
     stopThrottling();
     socket = null;
-    console.log(
-      '[finnhub-socket] 🔄 Retrying connection to Finnhub WebSocket...',
+
+    const isRateLimit = !!(
+      event.reason?.includes('429') ||
+      event.reason?.includes('Too Many Requests')
     );
-    setTimeout(connect, 4000); // retry connection after 4 seconds
+
+    const retryDelay = getRetryDelay(isRateLimit);
+    console.log(
+      `[finnhub-socket] 🔄 Retrying connection in ${retryDelay / 1000}s...`,
+    );
+
+    // Clear any existing retry timeout
+    if (retryTimeout) {
+      clearTimeout(retryTimeout);
+    }
+
+    retryTimeout = setTimeout(() => {
+      retryTimeout = null;
+      connect();
+    }, retryDelay);
   };
 
-  socket.onerror = error => {
-    console.error(
-      '[finnhub-socket] 💥 Error connecting to Finnhub WebSocket:',
-      error,
-    );
+  socket.onerror = () => {
+    console.error('[finnhub-socket] 💥 Error connecting to Finnhub WebSocket:');
   };
 };
 
 export const disconnect = () => {
   stopThrottling();
+  if (retryTimeout) {
+    clearTimeout(retryTimeout);
+    retryTimeout = null;
+  }
+  retryCount = 0; // Reset retry count on manual disconnect
   socket?.close();
   socket = null;
   console.log('Disconnected from Finnhub WebSocket');
@@ -296,12 +308,7 @@ export const subscribe = (symbol: string) => {
       symbol: normalizedSymbol,
     });
     console.log('[finnhub-socket] ✅ Sending subscribe message:', message);
-    console.log(
-      '[finnhub-socket] Original symbol:',
-      symbol,
-      '→ Normalized:',
-      normalizedSymbol,
-    );
+
     socket.send(message);
   } else {
     console.log(
