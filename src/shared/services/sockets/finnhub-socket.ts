@@ -12,7 +12,7 @@ let socket: WebSocket | null = null;
 let throttleInterval: ReturnType<typeof setTimeout> | null = null;
 let retryTimeout: ReturnType<typeof setTimeout> | null = null;
 let retryCount = 0;
-const MAX_RETRY_DELAY = 30000; // 30 seconds max
+const MAX_RETRY_DELAY = 60000; // 60 seconds max
 const INITIAL_RETRY_DELAY = 4000; // 4 seconds initial
 
 const subscriptions = new Set<string>();
@@ -42,9 +42,9 @@ const stopThrottling = () => {
 
 const getRetryDelay = (isRateLimit: boolean): number => {
   if (isRateLimit) {
-    // Exponential backoff for rate limits:  10s...
+    // Exponential backoff for rate limits
     retryCount++;
-    const delay = Math.min(10000 * retryCount, MAX_RETRY_DELAY);
+    const delay = Math.min(30000 * retryCount, MAX_RETRY_DELAY);
     return delay;
   } else {
     // Reset retry count for non-rate-limit errors
@@ -53,63 +53,8 @@ const getRetryDelay = (isRateLimit: boolean): number => {
   }
 };
 
-const generateDummyTradeData = (): ITradeMarketData[] => {
-  const baseTimestamp = Date.now();
-
-  return [
-    {
-      p: 271.52,
-      s: 'AAPL',
-      t: baseTimestamp - 4000,
-      v: 15234,
-    },
-    {
-      p: 271.45,
-      s: 'AAPL',
-      t: baseTimestamp - 3000,
-      v: 28901,
-    },
-    {
-      p: 271.58,
-      s: 'AAPL',
-      t: baseTimestamp - 2000,
-      v: 12456,
-    },
-    {
-      p: 271.41,
-      s: 'AAPL',
-      t: baseTimestamp - 1000,
-      v: 34567,
-    },
-    {
-      p: 271.49,
-      s: 'AAPL',
-      t: baseTimestamp,
-      v: 19823,
-    },
-  ];
-};
-
-const emitDummyTradeData = () => {
-  //  * Only emits if there are listeners and subscriptions
-  if (tradeDataListeners.size === 0 || !subscriptions.has('AAPL')) {
-    return;
-  }
-
-  const dummyTrades = generateDummyTradeData();
-
-  dummyTrades.forEach(trade => {
-    // Update pending price updates
-    pendingUpdates[trade.s] = trade.p;
-
-    // Emit to trade data listeners
-    tradeDataListeners.forEach(listener => listener(trade));
-  });
-};
-
 const handleMessage = (event: WebSocketMessageEvent) => {
   console.log('[finnhub-socket] RAW message received:', event.data);
-  console.log('[finnhub-socket] Message type:', typeof event.data);
 
   try {
     // Handle ping messages (keep-alive from Finnhub)
@@ -129,10 +74,6 @@ const handleMessage = (event: WebSocketMessageEvent) => {
       event.data,
     ) as IFinnhubMarketData;
     console.log('[finnhub-socket] 📨 Message received, type:', message.type);
-    console.log(
-      '[finnhub-socket] Full message:',
-      JSON.stringify(message, null, 2),
-    );
 
     if (message.type === 'trade') {
       console.log(
@@ -195,7 +136,8 @@ const restoreSubscription = () => {
     });
   } else {
     console.log(
-      '[finnhub-socket] ⚠️ Cannot restore subscriptions, socket not ready',
+      '[finnhub-socket] ⚠️ Cannot restore subscriptions, socket not ready - state:',
+      socket?.readyState,
     );
   }
 };
@@ -223,8 +165,8 @@ export const connect = () => {
     restoreSubscription();
     startThrottling();
 
-    // Emit dummy trade data for testing
-    emitDummyTradeData();
+    // // Emit dummy trade data for testing
+    // emitDummyTradeData();
   };
 
   socket.onmessage = handleMessage;
@@ -261,9 +203,9 @@ export const connect = () => {
     }, retryDelay);
   };
 
-  socket.onerror = () => {
-    console.error('[finnhub-socket] 💥 Error connecting to Finnhub WebSocket:');
-  };
+  // socket.onerror = () => {
+  //   console.error('[finnhub-socket] 💥 Error connecting to Finnhub WebSocket:');
+  // };
 };
 
 export const disconnect = () => {
@@ -318,9 +260,20 @@ export const subscribe = (symbol: string) => {
 };
 
 export const unsubscribe = (symbol: string) => {
-  subscriptions.delete(symbol);
+  const deleted = subscriptions.delete(symbol);
+  console.log(
+    '[finnhub-socket] Unsubscribed from symbol:',
+    symbol,
+    ' - deleted:',
+    deleted,
+  );
   if (socket !== null && socket.readyState === WebSocket.OPEN) {
-    socket!.send(JSON.stringify({ type: 'unsubscribe', symbol }));
+    const normalizedSymbol = symbol.toUpperCase();
+    const message = JSON.stringify({
+      type: 'unsubscribe',
+      symbol: normalizedSymbol,
+    });
+    socket!.send(message);
   }
 };
 

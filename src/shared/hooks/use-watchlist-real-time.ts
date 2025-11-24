@@ -63,6 +63,9 @@ export const useWatchlistInRealTime = () => {
       if (!currentSymbols.has(symbol)) {
         console.log('[useWatchlistInRealTime] Unsubscribing from', symbol);
         finnhubSocketService.unsubscribe(symbol);
+        const updatedStockData = { ...stockData };
+        delete updatedStockData[symbol];
+        setStockData(updatedStockData);
       }
     });
 

@@ -30,10 +30,19 @@ export const useStockAlerts = () => {
     );
   };
 
+  const resetAlertFired = (symbol: string) => {
+    setStockAlerts(
+      stockAlerts.map(alert =>
+        alert.symbol === symbol ? { ...alert, alertFired: false } : alert,
+      ),
+    );
+  };
+
   const actions = {
     addStockAlert,
     removeStockAlert,
     updateStockAlert,
+    resetAlertFired,
   };
   return { stockAlerts, actions };
 };

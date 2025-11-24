@@ -9,8 +9,6 @@ const WatchlistCards = () => {
   const { watchlist } = useWatchlist();
   const { stockData } = useWatchlistInRealTime();
 
-  console.log('[WatchlistCards] Render - stockData:', stockData);
-
   if (watchlist.length === 0) {
     return (
       <View style={spacingStyles.mdVerticalMargin}>
